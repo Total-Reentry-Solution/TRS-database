@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import django.contrib.staticfiles
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,10 +27,6 @@ SECRET_KEY = 'django-insecure-x$b77w^-*r4e4ocd!vrd!k1jf6!iyw2vu$_7bg9jxenk#$n3un
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
-# Railway specific files
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
 
 # Application definition
 
@@ -78,10 +75,24 @@ WSGI_APPLICATION = 'TRS_Backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+"""
+'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ["mysql_name"],
+        'USER': os.environ["mysql_user"],
+        'PASSWORD': os.environ["mysql_password"],
+        'HOST': os.environ["mysql_host"],
+        'PORT': os.environ["mysql_port"],
+    }
+"""
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ["mysql_name"],
+        'USER': os.environ["mysql_user"],
+        'PASSWORD': os.environ["mysql_password"],
+        'HOST': os.environ["mysql_host"],
+        'PORT': os.environ["mysql_port"],
     }
 }
 
@@ -121,6 +132,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT =os.path.join(BASE_DIR, 'static')
+
+print(f"ROOT = {STATIC_ROOT}, URL= {STATIC_URL}")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

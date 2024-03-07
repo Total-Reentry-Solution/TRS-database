@@ -11,7 +11,6 @@ from datetime import date
 from django.db import models
 from django import forms
 
-
 class DailyActionInline(admin.TabularInline):
     model = DailyAction
     extra = 1
