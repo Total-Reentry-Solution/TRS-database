@@ -75,24 +75,11 @@ WSGI_APPLICATION = 'TRS_Backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-"""
-'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ["mysql_name"],
-        'USER': os.environ["mysql_user"],
-        'PASSWORD': os.environ["mysql_password"],
-        'HOST': os.environ["mysql_host"],
-        'PORT': os.environ["mysql_port"],
-    }
-"""
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ["mysql_name"],
-        'USER': os.environ["mysql_user"],
-        'PASSWORD': os.environ["mysql_password"],
-        'HOST': os.environ["mysql_host"],
-        'PORT': os.environ["mysql_port"],
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -133,9 +120,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT =os.path.join(BASE_DIR, 'static')
-
-print(f"ROOT = {STATIC_ROOT}, URL= {STATIC_URL}")
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
