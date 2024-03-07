@@ -16,6 +16,8 @@ import django.contrib.staticfiles
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#Railwau
+CSRF_TRUSTED_ORIGINS = ["https://trs-database-production.up.railway.app", "https://*.127.0.0.1"]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -123,10 +125,6 @@ STATIC_ROOT =os.path.join(BASE_DIR, 'static')
 
 #Railway
 
-CORS_ALLOWED_ORIGINS = [
-    "https://trs-database-production.up.railway.app",
-    # Add any other trusted origins here if needed
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
