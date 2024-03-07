@@ -1,0 +1,1 @@
+web: gunicorn TRS_Backend.wsgi --log-file -

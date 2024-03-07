@@ -1,0 +1,15 @@
+annotated-types==0.6.0
+asgiref==3.7.2
+certifi==2024.2.2
+contextlib2==21.6.0
+Django==4.1.13
+django-ninja==1.1.0
+django-ninja-extra==0.20.4
+gunicorn==20.0.4
+injector==0.21.0
+mysqlclient==2.2.4
+pydantic==2.6.1
+pydantic_core==2.16.2
+pytz==2024.1
+sqlparse==0.2.4
+typing_extensions==4.9.0
