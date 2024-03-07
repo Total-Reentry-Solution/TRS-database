@@ -26,7 +26,7 @@ CSRF_TRUSTED_ORIGINS = ["https://trs-database-production.up.railway.app", "https
 SECRET_KEY = 'django-insecure-x$b77w^-*r4e4ocd!vrd!k1jf6!iyw2vu$_7bg9jxenk#$n3un'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -123,6 +123,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT =os.path.join(BASE_DIR, 'static')
 
+ALLOWED_HOSTS = ['127.0.0.1']
 #Railway
 
 
