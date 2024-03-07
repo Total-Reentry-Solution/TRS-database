@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-x$b77w^-*r4e4ocd!vrd!k1jf6!iyw2vu$_7bg9jxenk#$n3un'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -120,6 +120,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT =os.path.join(BASE_DIR, 'static')
+
+#Railway
+
+CORS_ALLOWED_ORIGINS = [
+    "https://trs-database-production.up.railway.app",
+    # Add any other trusted origins here if needed
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
