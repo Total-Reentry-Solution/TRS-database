@@ -6,7 +6,7 @@ from .mymodels.ParoleAddress import ParoleAddress
 from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.ReturningCitizen import ReturningCitizen
 from .mymodels.TempUserLogin import TempUserLogin
-from typing import Optional
+from typing import Optional, List
 
 #Schema Templates for use below
 class DailyActionSchema(ModelSchema):
@@ -52,8 +52,8 @@ class FullReturningCitizenSchema(Schema):
     parole_address: Optional[ParoleAddressSchema] = []
     mentor: Optional[MentorSchema] = []
     parole_officer: Optional[ParoleOfficerSchema] = []
-    daily_actions: Optional[list[DailyActionSchema]] = []
-    daily_responses: Optional[list[DailyResponseSchema]] = []
+    daily_actions: Optional[List[DailyActionSchema]] = []
+    daily_responses: Optional[List[DailyResponseSchema]] = []
 
 class FirstTimeLoginSchema(Schema):
     userID: str
@@ -61,5 +61,5 @@ class FirstTimeLoginSchema(Schema):
     parole_address: Optional[ParoleAddressSchema] = []
     mentor: Optional[MentorSchema] = []
     parole_officer: Optional[ParoleOfficerSchema] = []
-    daily_actions: Optional[list[DailyActionSchema]] = []
-    daily_responses: Optional[list[DailyResponseSchema]] = []
+    daily_actions: Optional[List[DailyActionSchema]] = []
+    daily_responses: Optional[List[DailyResponseSchema]] = []
