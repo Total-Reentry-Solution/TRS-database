@@ -80,7 +80,7 @@ class TempUserController:
         returningCitizen = get_object_or_404(ReturningCitizen, userID=temp.returning_citizen.userID)
 
         if not current_time <= temp.valid_until:
-           error_message = f"User expired. Current day: {current_time}, Login valid until: {returningCitizen.valid_until}"
+           error_message = "User expired."
            raise HttpError(404, error_message)
 
         temp.delete()
