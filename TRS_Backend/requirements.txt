@@ -6,7 +6,7 @@ Django==4.1.13
 django-ninja==1.1.0
 django-ninja-extra==0.20.4
 injector==0.21.0
-psycopg2=2.9.9
+psycopg2==2.9.9
 pydantic==2.6.1
 pydantic_core==2.16.2
 pytz==2024.1
