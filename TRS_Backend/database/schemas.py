@@ -7,8 +7,10 @@ from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.ReturningCitizen import ReturningCitizen
 from .mymodels.TempUserLogin import TempUserLogin
 from typing import Optional, List
+from datetime import datetime
 
-#Schema Templates for use below
+
+#GET
 class DailyActionSchema(ModelSchema):
     class Meta:
         model = DailyAction
@@ -44,7 +46,7 @@ class TempUserLoginSchema(ModelSchema):
         model = TempUserLogin
         fields = ("returning_citizen",)
 
-#Schemas Returned from the API
+#Schemas Returned from the LoginController
         
 class FullReturningCitizenSchema(Schema):
     userID: str
@@ -63,3 +65,31 @@ class FirstTimeLoginSchema(Schema):
     parole_officer: Optional[ParoleOfficerSchema] = []
     daily_actions: Optional[List[DailyActionSchema]] = []
     daily_responses: Optional[List[DailyResponseSchema]] = []
+
+#POST
+
+class CreateDailyActionHelper(Schema):
+    date: datetime
+    location: str
+    description: str
+    returning_citizen_id: str
+
+
+class CreateDailyActionSchema(Schema):
+    date: datetime
+    location: str
+    description: str
+    returning_citizen: ReturningCitizenSchema
+
+class CreateDailyResonseHelper(Schema):
+    date: datetime
+    rating: str
+    returning_citizen_id: str
+
+
+class CreateDailyResponseSchema(Schema):
+    date: datetime
+    rating: str
+    returning_citizen: ReturningCitizenSchema
+
+

@@ -15,7 +15,9 @@ from django.utils import timezone
 from ninja.errors import HttpError
 app = NinjaExtraAPI()
 
-def grab_neccessary_info(self, returningCitizen, firstTime):
+
+# Helper Functions #
+def fetch_all_rc_data(self, returningCitizen, firstTime):
     ## Parole Address
         try:
             parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
@@ -70,8 +72,60 @@ def grab_neccessary_info(self, returningCitizen, firstTime):
 
 
 
+
+
+# Api #
+        
+@api_controller('/update', tags=['Add'], permissions=[])
+class UpdateController:
+    @route.post("/daily_actions/", permissions=[])
+    def post_daily_action(self, helper: CreateDailyActionHelper):
+
+        returning_citizen = get_object_or_404(ReturningCitizen, userID=helper.returning_citizen_id)
+        new_daily_action = DailyAction(
+            date=helper.date,
+            location=helper.location,
+            description=helper.description,
+            returning_citizen=returning_citizen
+        )
+
+        new_daily_action.save()
+        return model_to_dict(new_daily_action)
+    
+    @route.post("/daily_response/", permissions=[])
+    def post_daily_response(self, helper: CreateDailyResonseHelper):
+
+        returning_citizen = get_object_or_404(ReturningCitizen, userID=helper.returning_citizen_id)
+        new_daily_response = DailyResponse(
+            date=helper.date,
+            rating=helper.rating,
+            returning_citizen=returning_citizen
+        )
+
+        new_daily_response.save()
+        return model_to_dict(new_daily_response)
+
+
+
+@api_controller('/fetch', tags=['Refresh'], permissions=[])
+class FetchController:
+    @route.get("/daily_actions/{apikey}/", response=List[DailyActionSchema])
+    def update_daily_actions(self, apikey: str):
+        user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
+        daily_actions = get_list_or_404(DailyAction, returning_citizen=user.returning_citizen)
+        return daily_actions
+    
+    @route.get("/daily_responses/{apikey}/", response=List[DailyResponseSchema])
+    def update_daily_responses(self, apikey: str):
+        user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
+        daily_responses = get_list_or_404(DailyResponse, returning_citizen=user.returning_citizen)
+        return daily_responses
+
+        
+
+
 @api_controller('/user', tags=['User'], permissions=[])
-class TempUserController:
+class LoginController:
     # First Login for new User Loging into their account
     @route.get("/{apikey}/{login}/", response= FirstTimeLoginSchema)
     def first_get(self, apikey: str, login: str):
@@ -87,26 +141,27 @@ class TempUserController:
         api_key_entry = ApiKeyForReturningCitizen(apikey=apikey, returning_citizen=returningCitizen)
         api_key_entry.save()
 
-        return grab_neccessary_info(self, returningCitizen, firstTime=True)
+        return fetch_all_rc_data(self, returningCitizen, firstTime=True)
     
+
+    # User getting up to date with any changes made in the database
     @route.get("/{apikey}/", response=FullReturningCitizenSchema)
     def get_citizen(self, apikey:str):
         user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
         returningCitizen = get_object_or_404(ReturningCitizen, userID=user.returning_citizen.userID)
 
-        # Error Handling
+        ## Error Handling
         if not user.returning_citizen.active:
             error_message = "User is Inactive"
             raise HttpError(404, error_message)
 
                     # Grab other information from other tables in db  #
-        return grab_neccessary_info(self, returningCitizen, firstTime=False)
+        return fetch_all_rc_data(self, returningCitizen, firstTime=False)
 
 
         
-
-
-            
 app.register_controllers(
-    TempUserController,
+    LoginController,
+    FetchController,
+    UpdateController,
 )
