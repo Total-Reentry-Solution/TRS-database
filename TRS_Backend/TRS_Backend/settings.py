@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-import django.contrib.staticfiles
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +25,7 @@ CSRF_TRUSTED_ORIGINS = ["https://trs-database-production.up.railway.app", "https
 SECRET_KEY = 'django-insecure-x$b77w^-*r4e4ocd!vrd!k1jf6!iyw2vu$_7bg9jxenk#$n3un'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,11 +77,28 @@ WSGI_APPLICATION = 'TRS_Backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-
-DATABASES = {
+"""
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+    """
+DATABASES = {
+
+       'default': {
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+        'NAME':'railway',
+
+        'USER': 'postgres',
+
+        'PASSWORD': 'vCJuwihbkalDnIruZpNZyZvQmfZKrFXm',
+
+        'HOST': 'viaduct.proxy.rlwy.net',
+
+        'PORT': '23115',
+
     }
 }
 
@@ -111,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
