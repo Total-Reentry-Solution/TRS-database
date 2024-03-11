@@ -1,19 +1,25 @@
 from ninja import ModelSchema, Schema
-from .mymodels.DailyAction import DailyAction
+from .mymodels.Event import Event
 from .mymodels.DailyResponse import DailyResponse
 from .mymodels.Mentor import Mentor
 from .mymodels.ParoleAddress import ParoleAddress
 from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.ReturningCitizen import ReturningCitizen
 from .mymodels.TempUserLogin import TempUserLogin
+from .mymodels.ThreeDailyActions import ThreeDailyActions
 from typing import Optional, List
 from datetime import datetime
 
 
 #GET
-class DailyActionSchema(ModelSchema):
+class ThreeDailyActionsSchema(ModelSchema):
     class Meta:
-        model = DailyAction
+        model = ThreeDailyActions
+        fields = ('date_id', 'date', 'description', 'is_completed')
+
+class EventSchema(ModelSchema):
+    class Meta:
+        model = Event
         fields = ('date', 'location', 'description')
 
 class DailyResponseSchema(ModelSchema):
@@ -54,8 +60,9 @@ class FullReturningCitizenSchema(Schema):
     parole_address: Optional[ParoleAddressSchema] = []
     mentor: Optional[MentorSchema] = []
     parole_officer: Optional[ParoleOfficerSchema] = []
-    daily_actions: Optional[List[DailyActionSchema]] = []
+    events: Optional[List[EventSchema]] = []
     daily_responses: Optional[List[DailyResponseSchema]] = []
+    daily_actions: Optional[List[ThreeDailyActionsSchema]] = []
 
 class FirstTimeLoginSchema(Schema):
     userID: str
@@ -63,33 +70,30 @@ class FirstTimeLoginSchema(Schema):
     parole_address: Optional[ParoleAddressSchema] = []
     mentor: Optional[MentorSchema] = []
     parole_officer: Optional[ParoleOfficerSchema] = []
-    daily_actions: Optional[List[DailyActionSchema]] = []
+    events: Optional[List[EventSchema]] = []
     daily_responses: Optional[List[DailyResponseSchema]] = []
+    daily_actions: Optional[List[ThreeDailyActionsSchema]] = []
 
 #POST
 
 class CreateDailyActionHelper(Schema):
+    date_id: int
+    date: datetime
+    description: str
+    is_completed: bool
+    returning_citizen_id: str
+    
+
+#
+class CreateEventHelper(Schema):
     date: datetime
     location: str
     description: str
     returning_citizen_id: str
 
 
-class CreateDailyActionSchema(Schema):
-    date: datetime
-    location: str
-    description: str
-    returning_citizen: ReturningCitizenSchema
-
+#
 class CreateDailyResonseHelper(Schema):
     date: datetime
     rating: str
     returning_citizen_id: str
-
-
-class CreateDailyResponseSchema(Schema):
-    date: datetime
-    rating: str
-    returning_citizen: ReturningCitizenSchema
-
-

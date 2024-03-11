@@ -1,18 +1,20 @@
 from database.mymodels.ReturningCitizen import ReturningCitizen
 from database.mymodels.Mentor import Mentor
 from database.mymodels.ParoleOfficer import ParoleOfficer
-from database.mymodels.DailyAction import DailyAction
+from database.mymodels.Event import Event
 from database.mymodels.ParoleAddress import ParoleAddress
 from database.mymodels.DailyResponse import DailyResponse
 from database.mymodels.TempUserLogin import TempUserLogin
 from database.mymodels.ApiKeyForCitizen import ApiKeyForReturningCitizen
-
+from database.mymodels.ThreeDailyActions import ThreeDailyActions
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, get_list_or_404
 from ninja_extra import NinjaExtraAPI, route, api_controller
 from .schemas import *
 from django.utils import timezone
 from ninja.errors import HttpError
+from django.http import JsonResponse
+
 app = NinjaExtraAPI()
 
 
@@ -25,12 +27,19 @@ def fetch_all_rc_data(self, returningCitizen, firstTime):
         except ParoleAddress.DoesNotExist:
             parole_address_data = None
 
-        ## Daily Action
+        ## 3 Daily Actions
         try:
-            daily_action_instance = DailyAction.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
             daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
-        except DailyAction.DoesNotExist:
+        except ThreeDailyActions.DoesNotExist:
             daily_action_data = None
+        
+        ## Events
+        try:
+            event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
+            event_data = [model_to_dict(instance) for instance in event_instance]
+        except Event.DoesNotExist:
+            event_data = None
 
         ## Daily Response
         try:
@@ -59,16 +68,18 @@ def fetch_all_rc_data(self, returningCitizen, firstTime):
                     "parole_address": parole_address_data, 
                     "mentor": mentor_data, 
                     "parole_officer": po_data, 
-                    "daily_actions": daily_action_data,
-                    "daily_responses": daily_response_data}
+                    "events": event_data,
+                    "daily_responses": daily_response_data, 
+                    "daily_actions": daily_action_data,}
         else:
             return {"userID" : "nil",
                     "returning_citizen": returningCitizen, 
                     "parole_address": parole_address_data, 
                     "mentor": mentor_data, 
                     "parole_officer": po_data, 
-                    "daily_actions": daily_action_data,
-                    "daily_responses": daily_response_data}
+                    "events": event_data,
+                    "daily_responses": daily_response_data,
+                    "daily_actions": daily_action_data}
 
 
 
@@ -78,19 +89,57 @@ def fetch_all_rc_data(self, returningCitizen, firstTime):
         
 @api_controller('/update', tags=['Add'], permissions=[])
 class UpdateController:
-    @route.post("/daily_actions/", permissions=[])
-    def post_daily_action(self, helper: CreateDailyActionHelper):
+    @route.post("/daily_action/", permissions=[])
+    def post_daily_action(self, helpers: List[CreateDailyActionHelper]):
+        new_daily_actions = []
+        returning_citizen = get_object_or_404(ReturningCitizen, userID=helpers[0].returning_citizen_id)
+
+        for helper in helpers:
+            print(f"Current Daily Action: {helper.description} on {helper.date}")
+
+            new_instance = ThreeDailyActions(
+                date_id = helper.date_id,
+                date = helper.date,
+                description = helper.description,
+                returning_citizen = returning_citizen,
+                is_completed = helper.is_completed,
+                date_only = helper.date.date()
+            )
+
+
+            already_exists = ThreeDailyActions.objects.filter(date_only=new_instance.date_only, date_id=new_instance.date_id)
+
+            if already_exists.exists():
+                print("already exists, updated")
+                existing_instance = already_exists.first()
+                if new_instance.date != existing_instance.date or new_instance.description != existing_instance.description or new_instance.is_completed != existing_instance.is_completed:
+                    print("something changed, saving")
+                    existing_instance.date = new_instance.date
+                    existing_instance.description = new_instance.description
+                    existing_instance.is_completed = new_instance.is_completed
+                    existing_instance.save()
+            else:
+                print("doesnt exist, saving")
+                print(f"{new_instance.date_only} {new_instance.date_id}")
+                new_instance.save()
+    
+        print("Finished processing daily actions")
+        return helpers
+    
+
+    @route.post("/event/", permissions=[])
+    def post_event(self, helper: CreateEventHelper):
 
         returning_citizen = get_object_or_404(ReturningCitizen, userID=helper.returning_citizen_id)
-        new_daily_action = DailyAction(
+        new_event = Event(
             date=helper.date,
-            location=helper.location,
             description=helper.description,
+            location=helper.location,
             returning_citizen=returning_citizen
         )
 
-        new_daily_action.save()
-        return model_to_dict(new_daily_action)
+        new_event.save()
+        return model_to_dict(new_event)
     
     @route.post("/daily_response/", permissions=[])
     def post_daily_response(self, helper: CreateDailyResonseHelper):
@@ -109,10 +158,17 @@ class UpdateController:
 
 @api_controller('/fetch', tags=['Refresh'], permissions=[])
 class FetchController:
-    @route.get("/daily_actions/{apikey}/", response=List[DailyActionSchema])
+
+    @route.get("/events/{apikey}/", response=List[EventSchema])
     def update_daily_actions(self, apikey: str):
         user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
-        daily_actions = get_list_or_404(DailyAction, returning_citizen=user.returning_citizen)
+        events = get_list_or_404(Event, returning_citizen=user.returning_citizen)
+        return events
+
+    @route.get("/daily_actions/{apikey}/", response=List[ThreeDailyActionsSchema])
+    def update_daily_actions(self, apikey: str):
+        user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
+        daily_actions = get_list_or_404(ThreeDailyActionsSchema, returning_citizen=user.returning_citizen)
         return daily_actions
     
     @route.get("/daily_responses/{apikey}/", response=List[DailyResponseSchema])
@@ -154,7 +210,6 @@ class LoginController:
         if not user.returning_citizen.active:
             error_message = "User is Inactive"
             raise HttpError(404, error_message)
-
                     # Grab other information from other tables in db  #
         return fetch_all_rc_data(self, returningCitizen, firstTime=False)
 

@@ -3,7 +3,6 @@ import uuid
 from django.core.exceptions import ValidationError
 from .Mentor import Mentor
 from .ParoleOfficer import ParoleOfficer
-from .ParoleAddress import ParoleAddress
 from datetime import date
 
 

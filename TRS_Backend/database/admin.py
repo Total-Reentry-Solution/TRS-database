@@ -2,17 +2,18 @@ from django.contrib import admin
 from django.contrib.admin.widgets import AdminSplitDateTime
 from .mymodels.ReturningCitizen import ReturningCitizen
 from .mymodels.Mentor import Mentor
-from .mymodels.DailyAction import DailyAction
+from .mymodels.Event import Event
 from .mymodels.ParoleAddress import ParoleAddress
 from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.DailyResponse import DailyResponse
 from .mymodels.TempUserLogin import TempUserLogin
+from .mymodels.ThreeDailyActions import ThreeDailyActions
 from datetime import date
 from django.db import models
 from django import forms
 
-class DailyActionInline(admin.TabularInline):
-    model = DailyAction
+class EventInline(admin.TabularInline):
+    model = Event
     extra = 1
     formfield_overrides = {
         models.DateTimeField: {'widget': AdminSplitDateTime},
@@ -35,7 +36,7 @@ class ParoleAddressInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return False
 
-class DInline(admin.TabularInline):
+class DailyResponseInline(admin.TabularInline):
     model = DailyResponse
     extra = 1
     
@@ -49,9 +50,9 @@ class ReturningCitizenAdmin(admin.ModelAdmin):
         }),
     )
 
-    list_display = ("__str__", "get_daily_response_avg", "get_mentor", "get_parole_offcer", "active", "get_pa", "upcoming_daily_actions", "old_daily_actions")
+    list_display = ("__str__", "get_daily_response_avg", "get_mentor", "get_parole_offcer", "active", "get_pa", "upcoming_events", "past_events")
     actions = ['set_inactive']
-    inlines = [DInline, ParoleAddressInline, DailyActionInline]
+    inlines = [DailyResponseInline, ParoleAddressInline, EventInline]
     #
     #
     #
@@ -90,21 +91,21 @@ class ReturningCitizenAdmin(admin.ModelAdmin):
     #
     #
     #
-    def upcoming_daily_actions(self, obj):
-        if obj.daily_actions.exists():
-            return sum(1 for action in obj.daily_actions.all() if action.is_valid())
+    def upcoming_events(self, obj):
+        if obj.events.exists():
+            return sum(1 for evnt in obj.events.all() if evnt.is_valid())
         else:
             return 0
-    upcoming_daily_actions.short_description = '# of Upcoming Daily Action Steps'
+    upcoming_events.short_description = '# of Upcoming Events'
     #
     #
     #
-    def old_daily_actions(self, obj):
-        if obj.daily_actions.exists():
-            return sum(1 for action in obj.daily_actions.all() if not action.is_valid())
+    def past_events(self, obj):
+        if obj.events.exists():
+            return sum(1 for evnt in obj.events.all() if not evnt.is_valid())
         else:
             return 0
-    old_daily_actions.short_description = '# of Past Daily Action Steps'
+    past_events.short_description = '# of Past Events'
     #
     #
     #
@@ -135,27 +136,41 @@ class ReturningCitizenInline(admin.StackedInline):
     model = ReturningCitizen
     extra = 0
     max_num = 0
-    fields = ('first_Name', 'last_Name', 'MDOC','p_address' ,'myMentor', 'myParoleOfficer', 'upcoming_daily_actions', 'old_daily_actions')
+    fields = ('first_Name', 'last_Name', 'MDOC','p_address' ,'myMentor', 'myParoleOfficer', 'upcoming_events', 'past_events', 'num_comp_da', 'num_uncomp_da')
     readonly_fields = fields
 
     def p_address(self, obj):
         return obj.paroleAddress
     p_address.short_description = 'Parole Address'
-    def upcoming_daily_actions(self, obj):
-        if obj.daily_actions.exists():
-            return sum(1 for action in obj.daily_actions.all() if action.is_valid())
+    def upcoming_events(self, obj):
+        if obj.events.exists():
+            return sum(1 for action in obj.events.all() if action.is_valid())
         else:
             return 0
-    upcoming_daily_actions.short_description = '# Active Daily Action Steps'
+    upcoming_events.short_description = '# Active Events'
     #
     #
     #
-    def old_daily_actions(self, obj):
-        if obj.daily_actions.exists():
-            return sum(1 for action in obj.daily_actions.all() if not action.is_valid())
+    def past_events(self, obj):
+        if obj.events.exists():
+            return sum(1 for action in obj.events.all() if not action.is_valid())
         else:
             return 0
-    old_daily_actions.short_description = '# Past Daily Action Steps'
+    past_events.short_description = '# Past Events'
+
+    def num_comp_da(self, obj):
+        if obj.daily_actions.exists():
+            return sum(1 for action in obj.daily_actions.all() if action.is_completed)
+        else:
+            return 0
+    num_comp_da.short_description = "Completed DAS"
+
+    def num_uncomp_da(self, obj):
+        if obj.daily_actions.exists():
+            return sum(1 for action in obj.daily_actions.all() if not action.is_completed)
+        else:
+            return 0
+    num_uncomp_da.short_description = "Un-Completed DAS"
 
     
 
