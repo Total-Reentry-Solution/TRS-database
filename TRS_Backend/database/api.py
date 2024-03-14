@@ -339,6 +339,13 @@ class ParoleOfficerLoginController:
         log_apikey.save()
 
         return fetch_all_po_data(self, parole_officer, firstTime=True)
+    
+    @route.get('/{apikey}/', response=ParoleOfficerLoginSchema)
+    def fetch_po_information(self, apikey: str, login: str):
+        temp = get_object_or_404(ApiKeyForParoleOfficer, apikey=apikey)
+        parole_officer = get_object_or_404(ParoleOfficer, parole_officer_id=temp.parole_officer.parole_officer_id)
+
+        return fetch_all_po_data(self, parole_officer, firstTime=False)
 
 
 
@@ -359,6 +366,12 @@ class MentorLoginController:
         log_apikey.save()
 
         return fetch_all_mentor_data(self, mentor, firstTime=True)
+    @route.get('/{apikey}/', response=MentorLoginSchema)
+    def fetch_po_information(self, apikey: str):
+        temp = get_object_or_404(ApiKeyForMentor, apikey=apikey)
+        mentor = get_object_or_404(Mentor, mentor_id=temp.mentor.mentor_id)
+
+        return fetch_all_po_data(self, mentor, firstTime=False)
 
 
 
