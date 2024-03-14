@@ -5,7 +5,7 @@ from .mymodels.Mentor import Mentor
 from .mymodels.ParoleAddress import ParoleAddress
 from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.ReturningCitizen import ReturningCitizen
-from .mymodels.TempUserLogin import TempUserLogin
+from .mymodels.TempLogins import TempUserLogin
 from .mymodels.ThreeDailyActions import ThreeDailyActions
 from typing import Optional, List
 from datetime import datetime
@@ -73,6 +73,36 @@ class FirstTimeLoginSchema(Schema):
     events: Optional[List[EventSchema]] = []
     daily_responses: Optional[List[DailyResponseSchema]] = []
     daily_actions: Optional[List[ThreeDailyActionsSchema]] = []
+
+class FullReturningCitizenSchemaNoParoleOfficer(Schema):
+    userID: str
+    returning_citizen: ReturningCitizenSchema
+    parole_address: Optional[ParoleAddressSchema] = []
+    mentor: Optional[MentorSchema] = []
+    events: Optional[List[EventSchema]] = []
+    daily_responses: Optional[List[DailyResponseSchema]] = []
+    daily_actions: Optional[List[ThreeDailyActionsSchema]] = []
+
+
+class FullReturningCitizenSchemaNoMentor(Schema):
+    userID: str
+    returning_citizen: ReturningCitizenSchema
+    parole_address: Optional[ParoleAddressSchema] = []
+    parole_officer: Optional[ParoleOfficerSchema] = []
+    events: Optional[List[EventSchema]] = []
+    daily_responses: Optional[List[DailyResponseSchema]] = []
+    daily_actions: Optional[List[ThreeDailyActionsSchema]] = []
+
+class MentorLoginSchema(Schema):
+    mentor_id: str
+    mentor_information: MentorSchema
+    returning_citizens: Optional[List[FullReturningCitizenSchemaNoMentor]]
+
+class ParoleOfficerLoginSchema(Schema):
+    po_id: str
+    po_information: ParoleOfficerSchema
+    returning_citizens: Optional[List[FullReturningCitizenSchemaNoParoleOfficer]]
+
 
 #POST
 

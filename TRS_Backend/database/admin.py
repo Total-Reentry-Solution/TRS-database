@@ -6,7 +6,7 @@ from .mymodels.Event import Event
 from .mymodels.ParoleAddress import ParoleAddress
 from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.DailyResponse import DailyResponse
-from .mymodels.TempUserLogin import TempUserLogin
+from .mymodels.TempLogins import TempUserLogin, TempParoleOfficerLogin, TempMentorLogin
 from .mymodels.ThreeDailyActions import ThreeDailyActions
 from datetime import date
 from django.db import models
@@ -209,6 +209,8 @@ admin.site.register(ReturningCitizen, ReturningCitizenAdmin)
 admin.site.register(Mentor, MentorAdmin)
 admin.site.register(ParoleOfficer, ParoleOfficerAdmin)
 admin.site.register(TempUserLogin)
+admin.site.register(TempMentorLogin)
+admin.site.register(TempParoleOfficerLogin)
 
 admin.site.site_header = "Total Reentry Solutions"
 admin.site.site_title = "TRS Admin Portal"

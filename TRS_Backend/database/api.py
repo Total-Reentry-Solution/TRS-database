@@ -4,8 +4,8 @@ from database.mymodels.ParoleOfficer import ParoleOfficer
 from database.mymodels.Event import Event
 from database.mymodels.ParoleAddress import ParoleAddress
 from database.mymodels.DailyResponse import DailyResponse
-from database.mymodels.TempUserLogin import TempUserLogin
-from database.mymodels.ApiKeyForCitizen import ApiKeyForReturningCitizen
+from database.mymodels.TempLogins import TempUserLogin, TempMentorLogin, TempParoleOfficerLogin
+from database.mymodels.ApiKeyFor_ import ApiKeyForReturningCitizen, ApiKeyForMentor, ApiKeyForParoleOfficer
 from database.mymodels.ThreeDailyActions import ThreeDailyActions
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -19,6 +19,152 @@ app = NinjaExtraAPI()
 
 
 # Helper Functions #
+
+def fetch_all_po_data(self, parole_officer, firstTime):
+    parole_officer_data = {
+        "po_id": str(parole_officer.parole_officer_id),
+        "po_information": {
+            "first_Name": parole_officer.first_Name,
+            "last_Name": parole_officer.last_Name,
+            "phone_number": parole_officer.phone_number,
+            "city" : parole_officer.city
+        },
+        "returning_citizens": []
+    }
+
+    if firstTime:
+        for returningCitizen in parole_officer.returning_citizens.all():
+            userID = str(returningCitizen.userID)
+
+            # Parole Address
+            try:
+                parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
+                parole_address_data = model_to_dict(parole_address_instance)
+            except ParoleAddress.DoesNotExist:
+                parole_address_data = []
+
+            # 3 Daily Actions
+            try:
+                daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
+                daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+            except ThreeDailyActions.DoesNotExist:
+                daily_action_data = []
+
+            # Events
+            try:
+                event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
+                event_data = [model_to_dict(instance) for instance in event_instance]
+            except Event.DoesNotExist:
+                event_data = []
+
+            # Daily Response
+            try:
+                daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
+                daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
+            except DailyResponse.DoesNotExist:
+                daily_response_data = []
+
+            # Mentor
+            if returningCitizen.myMentor is not None:
+                try:
+                    mentor_data = model_to_dict(Mentor.objects.get(mentor_id=returningCitizen.myMentor.mentor_id))
+                except Mentor.DoesNotExist:
+                    pass
+
+            returning_citizen_data = {
+                "userID": userID,
+                "returning_citizen": {
+                    "first_Name": returningCitizen.first_Name,
+                    "last_Name": returningCitizen.last_Name,
+                    "MDOC": returningCitizen.MDOC
+                },
+                "parole_address": parole_address_data,
+                "mentor": mentor_data,
+                "events": event_data,
+                "daily_responses": daily_response_data,
+                "daily_actions": daily_action_data,
+            }
+            parole_officer_data["returning_citizens"].append(returning_citizen_data)
+
+    else:
+        userID = "nil"
+
+    return parole_officer_data
+
+
+def fetch_all_mentor_data(self, mentor, firstTime):
+    mentor_data = {
+        "mentor_id": str(mentor.mentor_id),
+        "mentor_information": {
+            "first_Name": mentor.first_Name,
+            "last_Name": mentor.last_Name,
+            "phone_number": mentor.phone_number
+        },
+        "returning_citizens": []
+    }
+
+    if firstTime:
+        for returningCitizen in mentor.returning_citizens.all():
+            userID = str(returningCitizen.userID)
+
+            # Parole Address
+            try:
+                parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
+                parole_address_data = model_to_dict(parole_address_instance)
+            except ParoleAddress.DoesNotExist:
+                parole_address_data = []
+
+            # 3 Daily Actions
+            try:
+                daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
+                daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+            except ThreeDailyActions.DoesNotExist:
+                daily_action_data = []
+
+            # Events
+            try:
+                event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
+                event_data = [model_to_dict(instance) for instance in event_instance]
+            except Event.DoesNotExist:
+                event_data = []
+
+            # Daily Response
+            try:
+                daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
+                daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
+            except DailyResponse.DoesNotExist:
+                daily_response_data = []
+
+            # Parole Officer
+            po_data = []
+            if returningCitizen.myParoleOfficer:
+                try:
+                    po_instance = ParoleOfficer.objects.get(parole_officer_id=returningCitizen.myParoleOfficer.parole_officer_id)
+                    po_data = model_to_dict(po_instance)
+                except ParoleOfficer.DoesNotExist:
+                    pass
+
+            returning_citizen_data = {
+                "userID": userID,
+                "returning_citizen": {
+                    "first_Name": returningCitizen.first_Name,
+                    "last_Name": returningCitizen.last_Name,
+                    "MDOC": returningCitizen.MDOC
+                },
+                "parole_address": parole_address_data,
+                "parole_officer": po_data,
+                "events": event_data,
+                "daily_responses": daily_response_data,
+                "daily_actions": daily_action_data,
+            }
+            mentor_data["returning_citizens"].append(returning_citizen_data)
+
+    else:
+        userID = "nil"
+
+    return mentor_data
+
+
 def fetch_all_rc_data(self, returningCitizen, firstTime):
     ## Parole Address
         try:
@@ -177,11 +323,47 @@ class FetchController:
         daily_responses = get_list_or_404(DailyResponse, returning_citizen=user.returning_citizen)
         return daily_responses
 
-        
+@api_controller('/paroleOfficer', tags=['ParoleOfficer'], permissions=[])
+class ParoleOfficerLoginController:
+    @route.get('/{apikey}/{login}', response=ParoleOfficerLoginSchema)
+    def fetch_po_information(self, apikey: str, login: str):
+        temp = get_object_or_404(TempParoleOfficerLogin, login=login)
+        current_time = timezone.now().date()
+        parole_officer = get_object_or_404(ParoleOfficer, parole_officer_id=temp.parole_officer.parole_officer_id)
+
+        if not current_time <= temp.valid_until:
+            error_message = "Parole Officer login code expired"
+            raise HttpError(404, error_message)
+        temp.delete()
+        log_apikey = ApiKeyForParoleOfficer(apikey=apikey, parole_officer=parole_officer)
+        log_apikey.save()
+
+        return fetch_all_po_data(self, parole_officer, firstTime=True)
+
+
+
+
+@api_controller('/mentor', tags=['Mentor'], permissions=[])
+class MentorLoginController:
+    @route.get('/{apikey}/{login}', response=MentorLoginSchema)
+    def fetch_mentor_information(self, apikey: str, login: str):
+        temp = get_object_or_404(TempMentorLogin, login=login)
+        current_time = timezone.now().date()
+        mentor = get_object_or_404(Mentor, mentor_id=temp.mentor.mentor_id)
+
+        if not current_time <= temp.valid_until:
+            error_message = "Mentor login code expired"
+            raise HttpError(404, error_message)
+        temp.delete()
+        log_apikey = ApiKeyForMentor(apikey=apikey, mentor=mentor)
+        log_apikey.save()
+
+        return fetch_all_mentor_data(self, mentor, firstTime=True)
+
 
 
 @api_controller('/user', tags=['User'], permissions=[])
-class LoginController:
+class UserLoginController:
     # First Login for new User Loging into their account
     @route.get("/{apikey}/{login}/", response= FirstTimeLoginSchema)
     def first_get(self, apikey: str, login: str):
@@ -190,7 +372,7 @@ class LoginController:
         returningCitizen = get_object_or_404(ReturningCitizen, userID=temp.returning_citizen.userID)
 
         if not current_time <= temp.valid_until:
-           error_message = "User expired."
+           error_message = "User login code expired."
            raise HttpError(404, error_message)
 
         temp.delete()
@@ -210,13 +392,14 @@ class LoginController:
         if not user.returning_citizen.active:
             error_message = "User is Inactive"
             raise HttpError(404, error_message)
-                    # Grab other information from other tables in db  #
         return fetch_all_rc_data(self, returningCitizen, firstTime=False)
 
 
         
 app.register_controllers(
-    LoginController,
+    UserLoginController,
     FetchController,
     UpdateController,
+    MentorLoginController,
+    ParoleOfficerLoginController
 )
