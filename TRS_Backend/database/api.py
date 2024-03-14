@@ -32,62 +32,63 @@ def fetch_all_po_data(self, parole_officer, firstTime):
         "returning_citizens": []
     }
 
-    if firstTime:
-        for returningCitizen in parole_officer.returning_citizens.all():
+    for returningCitizen in parole_officer.returning_citizens.all():
+
+        if not firstTime:
+            userID = "nil"
+        else:
             userID = str(returningCitizen.userID)
 
-            # Parole Address
+        # Parole Address
+        try:
+            parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
+            parole_address_data = model_to_dict(parole_address_instance)
+        except ParoleAddress.DoesNotExist:
+            parole_address_data = []
+
+        # 3 Daily Actions
+        try:
+            daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+        except ThreeDailyActions.DoesNotExist:
+            daily_action_data = []
+
+        # Events
+        try:
+            event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
+            event_data = [model_to_dict(instance) for instance in event_instance]
+        except Event.DoesNotExist:
+            event_data = []
+
+        # Daily Response
+        try:
+            daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
+        except DailyResponse.DoesNotExist:
+            daily_response_data = []
+
+        # Mentor
+        if returningCitizen.myMentor is not None:
             try:
-                parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
-                parole_address_data = model_to_dict(parole_address_instance)
-            except ParoleAddress.DoesNotExist:
-                parole_address_data = []
+                mentor_data = model_to_dict(Mentor.objects.get(mentor_id=returningCitizen.myMentor.mentor_id))
+            except Mentor.DoesNotExist:
+                pass
 
-            # 3 Daily Actions
-            try:
-                daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
-                daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
-            except ThreeDailyActions.DoesNotExist:
-                daily_action_data = []
+        returning_citizen_data = {
+            "userID": userID,
+            "returning_citizen": {
+                "first_Name": returningCitizen.first_Name,
+                "last_Name": returningCitizen.last_Name,
+                "MDOC": returningCitizen.MDOC
+            },
+            "parole_address": parole_address_data,
+            "mentor": mentor_data,
+            "events": event_data,
+            "daily_responses": daily_response_data,
+            "daily_actions": daily_action_data,
+        }
+        parole_officer_data["returning_citizens"].append(returning_citizen_data)
 
-            # Events
-            try:
-                event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
-                event_data = [model_to_dict(instance) for instance in event_instance]
-            except Event.DoesNotExist:
-                event_data = []
-
-            # Daily Response
-            try:
-                daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
-                daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
-            except DailyResponse.DoesNotExist:
-                daily_response_data = []
-
-            # Mentor
-            if returningCitizen.myMentor is not None:
-                try:
-                    mentor_data = model_to_dict(Mentor.objects.get(mentor_id=returningCitizen.myMentor.mentor_id))
-                except Mentor.DoesNotExist:
-                    pass
-
-            returning_citizen_data = {
-                "userID": userID,
-                "returning_citizen": {
-                    "first_Name": returningCitizen.first_Name,
-                    "last_Name": returningCitizen.last_Name,
-                    "MDOC": returningCitizen.MDOC
-                },
-                "parole_address": parole_address_data,
-                "mentor": mentor_data,
-                "events": event_data,
-                "daily_responses": daily_response_data,
-                "daily_actions": daily_action_data,
-            }
-            parole_officer_data["returning_citizens"].append(returning_citizen_data)
-
-    else:
-        userID = "nil"
 
     return parole_officer_data
 
@@ -103,64 +104,66 @@ def fetch_all_mentor_data(self, mentor, firstTime):
         "returning_citizens": []
     }
 
-    if firstTime:
-        for returningCitizen in mentor.returning_citizens.all():
+    
+    for returningCitizen in mentor.returning_citizens.all():
+
+        if firstTime:
             userID = str(returningCitizen.userID)
+        else:
+            userID = "nil"
+        
 
-            # Parole Address
+        # Parole Address
+        try:
+            parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
+            parole_address_data = model_to_dict(parole_address_instance)
+        except ParoleAddress.DoesNotExist:
+            parole_address_data = []
+
+        # 3 Daily Actions
+        try:
+            daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+        except ThreeDailyActions.DoesNotExist:
+            daily_action_data = []
+
+        # Events
+        try:
+            event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
+            event_data = [model_to_dict(instance) for instance in event_instance]
+        except Event.DoesNotExist:
+            event_data = []
+
+        # Daily Response
+        try:
+            daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
+        except DailyResponse.DoesNotExist:
+            daily_response_data = []
+
+        # Parole Officer
+        po_data = []
+        if returningCitizen.myParoleOfficer:
             try:
-                parole_address_instance = ParoleAddress.objects.get(returning_citizen_id=returningCitizen.userID)
-                parole_address_data = model_to_dict(parole_address_instance)
-            except ParoleAddress.DoesNotExist:
-                parole_address_data = []
+                po_instance = ParoleOfficer.objects.get(parole_officer_id=returningCitizen.myParoleOfficer.parole_officer_id)
+                po_data = model_to_dict(po_instance)
+            except ParoleOfficer.DoesNotExist:
+                pass
 
-            # 3 Daily Actions
-            try:
-                daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
-                daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
-            except ThreeDailyActions.DoesNotExist:
-                daily_action_data = []
-
-            # Events
-            try:
-                event_instance = Event.objects.filter(returning_citizen_id=returningCitizen.userID)
-                event_data = [model_to_dict(instance) for instance in event_instance]
-            except Event.DoesNotExist:
-                event_data = []
-
-            # Daily Response
-            try:
-                daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
-                daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
-            except DailyResponse.DoesNotExist:
-                daily_response_data = []
-
-            # Parole Officer
-            po_data = []
-            if returningCitizen.myParoleOfficer:
-                try:
-                    po_instance = ParoleOfficer.objects.get(parole_officer_id=returningCitizen.myParoleOfficer.parole_officer_id)
-                    po_data = model_to_dict(po_instance)
-                except ParoleOfficer.DoesNotExist:
-                    pass
-
-            returning_citizen_data = {
-                "userID": userID,
-                "returning_citizen": {
-                    "first_Name": returningCitizen.first_Name,
-                    "last_Name": returningCitizen.last_Name,
-                    "MDOC": returningCitizen.MDOC
-                },
-                "parole_address": parole_address_data,
-                "parole_officer": po_data,
-                "events": event_data,
-                "daily_responses": daily_response_data,
-                "daily_actions": daily_action_data,
-            }
-            mentor_data["returning_citizens"].append(returning_citizen_data)
-
-    else:
-        userID = "nil"
+        returning_citizen_data = {
+            "userID": userID,
+            "returning_citizen": {
+                "first_Name": returningCitizen.first_Name,
+                "last_Name": returningCitizen.last_Name,
+                "MDOC": returningCitizen.MDOC
+            },
+            "parole_address": parole_address_data,
+            "parole_officer": po_data,
+            "events": event_data,
+            "daily_responses": daily_response_data,
+            "daily_actions": daily_action_data,
+        }
+        mentor_data["returning_citizens"].append(returning_citizen_data)
 
     return mentor_data
 
@@ -367,11 +370,11 @@ class MentorLoginController:
 
         return fetch_all_mentor_data(self, mentor, firstTime=True)
     @route.get('/{apikey}/', response=MentorLoginSchema)
-    def fetch_po_information(self, apikey: str):
+    def fetch_mentor_information(self, apikey: str):
         temp = get_object_or_404(ApiKeyForMentor, apikey=apikey)
         mentor = get_object_or_404(Mentor, mentor_id=temp.mentor.mentor_id)
 
-        return fetch_all_po_data(self, mentor, firstTime=False)
+        return fetch_all_mentor_data(self, mentor, firstTime=False)
 
 
 
