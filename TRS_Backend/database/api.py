@@ -341,7 +341,7 @@ class ParoleOfficerLoginController:
         return fetch_all_po_data(self, parole_officer, firstTime=True)
     
     @route.get('/{apikey}/', response=ParoleOfficerLoginSchema)
-    def fetch_po_information(self, apikey: str, login: str):
+    def fetch_po_information(self, apikey: str):
         temp = get_object_or_404(ApiKeyForParoleOfficer, apikey=apikey)
         parole_officer = get_object_or_404(ParoleOfficer, parole_officer_id=temp.parole_officer.parole_officer_id)
 
