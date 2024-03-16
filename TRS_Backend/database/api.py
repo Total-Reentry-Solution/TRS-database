@@ -314,7 +314,7 @@ class FetchController:
     @route.get("/daily_actions/{apikey}/", response=List[ThreeDailyActionsSchema])
     def update_daily_actions(self, apikey: str):
         user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
-        daily_actions = get_list_or_404(ThreeDailyActionsSchema, returning_citizen=user.returning_citizen)
+        daily_actions = get_list_or_404(ThreeDailyActions, returning_citizen=user.returning_citizen)
         return daily_actions
     
     @route.get("/daily_responses/{apikey}/", response=List[DailyResponseSchema])
