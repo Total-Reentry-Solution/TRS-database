@@ -33,10 +33,10 @@ def fetch_all_po_data(self, parole_officer, firstTime):
     }
 
     for returningCitizen in parole_officer.returning_citizens.all():
-        if not firstTime:
-            userID = "nil"
-        else:
-            userID = str(returningCitizen.userID)
+        #if not firstTime:
+        userID = "nil"
+        #else:
+            #userID = str(returningCitizen.userID)
 
         # Parole Address
         try:
@@ -105,10 +105,10 @@ def fetch_all_mentor_data(self, mentor, firstTime):
 
     
     for returningCitizen in mentor.returning_citizens.all():
-        if not firstTime:
-            userID = "nil"
-        else:
-            userID = str(returningCitizen.userID)
+        #if not firstTime:
+        userID = "nil"
+        #else:
+            #userID = str(returningCitizen.userID)
 
 
         # Parole Address
