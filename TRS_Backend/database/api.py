@@ -34,9 +34,9 @@ def fetch_all_po_data(self, parole_officer, firstTime):
 
     for returningCitizen in parole_officer.returning_citizens.all():
         #if not firstTime:
-        userID = "nil"
+        #userID = "nil"
         #else:
-            #userID = str(returningCitizen.userID)
+        #userID = str(returningCitizen.userID)
 
         # Parole Address
         try:
@@ -74,7 +74,7 @@ def fetch_all_po_data(self, parole_officer, firstTime):
                 pass
 
         returning_citizen_data = {
-            "userID": userID,
+            "userID": str(returningCitizen.userID),
             "returning_citizen": {
                 "first_Name": returningCitizen.first_Name,
                 "last_Name": returningCitizen.last_Name,
@@ -106,9 +106,9 @@ def fetch_all_mentor_data(self, mentor, firstTime):
     
     for returningCitizen in mentor.returning_citizens.all():
         #if not firstTime:
-        userID = "nil"
+        #userID = "nil"
         #else:
-            #userID = str(returningCitizen.userID)
+        userID = str(returningCitizen.userID)
 
 
         # Parole Address
@@ -149,7 +149,7 @@ def fetch_all_mentor_data(self, mentor, firstTime):
                 pass
 
         returning_citizen_data = {
-            "userID": userID,
+            "userID": str(returningCitizen.userID),
             "returning_citizen": {
                 "first_Name": returningCitizen.first_Name,
                 "last_Name": returningCitizen.last_Name,
