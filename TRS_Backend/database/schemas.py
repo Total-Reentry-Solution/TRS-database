@@ -7,11 +7,17 @@ from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.ReturningCitizen import ReturningCitizen
 from .mymodels.TempLogins import TempUserLogin
 from .mymodels.ThreeDailyActions import ThreeDailyActions
+from .mymodels.CommunityHealthOrg import CommunityHealthOrganization
 from typing import Optional, List
 from datetime import datetime
 
 
 #GET
+class CommunityHealthOrganizationSchema(ModelSchema):
+    class Meta:
+        model = CommunityHealthOrganization
+        fields = ('name', 'description', 'url', 'logo_url', 'latitude', 'longitude')
+
 class ThreeDailyActionsSchema(ModelSchema):
     class Meta:
         model = ThreeDailyActions

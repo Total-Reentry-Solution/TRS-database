@@ -307,6 +307,16 @@ class UpdateController:
 @api_controller('/fetch', tags=['Refresh'], permissions=[])
 class FetchController:
 
+    @route.get("/community_health_organizations/{apikey}/", response=List[CommunityHealthOrganizationSchema])
+    def fetch_cho(self, apikey: str):
+        usr = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)
+        if not usr:
+           raise HttpError(404, "apikey not valid")
+        
+        chos = get_list_or_404(CommunityHealthOrganization)
+        return chos
+        
+
     @route.get("/events/{apikey}/", response=List[EventSchema])
     def update_daily_actions(self, apikey: str):
         user = get_object_or_404(ApiKeyForReturningCitizen, apikey=apikey)

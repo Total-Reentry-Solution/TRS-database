@@ -8,6 +8,7 @@ from .mymodels.ParoleOfficer import ParoleOfficer
 from .mymodels.DailyResponse import DailyResponse
 from .mymodels.TempLogins import TempUserLogin, TempParoleOfficerLogin, TempMentorLogin
 from .mymodels.ThreeDailyActions import ThreeDailyActions
+from .mymodels.CommunityHealthOrg import CommunityHealthOrganization
 from datetime import date
 from django.db import models
 from django import forms
@@ -211,6 +212,7 @@ admin.site.register(ParoleOfficer, ParoleOfficerAdmin)
 admin.site.register(TempUserLogin)
 admin.site.register(TempMentorLogin)
 admin.site.register(TempParoleOfficerLogin)
+admin.site.register(CommunityHealthOrganization)
 
 admin.site.site_header = "Total Reentry Solutions"
 admin.site.site_title = "TRS Admin Portal"
