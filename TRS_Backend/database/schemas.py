@@ -16,7 +16,7 @@ from datetime import datetime
 class CommunityHealthOrganizationSchema(ModelSchema):
     class Meta:
         model = CommunityHealthOrganization
-        fields = ('name', 'description', 'url', 'logo_url', 'latitude', 'longitude')
+        fields = ('name', 'description', 'url', 'logo_url', 'latitude', 'longitude', 'phone_number')
 
 class ThreeDailyActionsSchema(ModelSchema):
     class Meta:
