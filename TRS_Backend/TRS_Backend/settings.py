@@ -26,7 +26,7 @@ CSRF_TRUSTED_ORIGINS = ["https://*.127.0.0.1", "app.totalreentry.com"]
 SECRET_KEY = 'django-insecure-x$b77w^-*r4e4ocd!vrd!k1jf6!iyw2vu$_7bg9jxenk#$n3un'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
