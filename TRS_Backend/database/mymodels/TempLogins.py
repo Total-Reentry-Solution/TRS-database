@@ -1,5 +1,6 @@
 from django.db import models
-from ApiKeyFor_ import *
+from database.mymodels.ApiKeyFor_ import ApiKeyForReturningCitizen, ApiKeyForMentor, ApiKeyForParoleOfficer
+
 
 class TempUserLogin(models.Model):
     login = models.CharField(max_length=6, unique=True)
