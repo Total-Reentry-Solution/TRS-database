@@ -16,7 +16,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #Railwau
-CSRF_TRUSTED_ORIGINS = ["https://trs-database-production.up.railway.app", "https://*.127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://*.127.0.0.1", "app.totalreentry.com"]
+    #"https://trs-database-production.up.railway.app
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
