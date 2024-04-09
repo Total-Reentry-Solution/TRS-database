@@ -122,6 +122,7 @@ def fetch_all_mentor_data(self, mentor, firstTime):
         try:
             daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
             daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+            
         except ThreeDailyActions.DoesNotExist:
             daily_action_data = []
 
@@ -179,6 +180,7 @@ def fetch_all_rc_data(self, returningCitizen, firstTime):
         try:
             daily_action_instance = ThreeDailyActions.objects.filter(returning_citizen_id=returningCitizen.userID)
             daily_action_data = [model_to_dict(instance) for instance in daily_action_instance]
+            daily_action_data.sort(key=lambda x: x['date'])
         except ThreeDailyActions.DoesNotExist:
             daily_action_data = None
         
