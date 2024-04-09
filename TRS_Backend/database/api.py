@@ -134,7 +134,7 @@ def fetch_all_mentor_data(self, mentor, firstTime):
 
         # Daily Response
         try:
-            daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID)
+            daily_response_instance = DailyResponse.objects.filter(returning_citizen_id=returningCitizen.userID).order_by('date')
             daily_response_data = [model_to_dict(instance) for instance in daily_response_instance]
         except DailyResponse.DoesNotExist:
             daily_response_data = []
