@@ -243,7 +243,6 @@ class UpdateController:
     def post_daily_action(self, helpers: List[CreateDailyActionHelper]):
         new_daily_actions = []
         returning_citizen = get_object_or_404(ReturningCitizen, userID=helpers[0].returning_citizen_id)
-        print(helpers)
         for helper in helpers:
             print(f"Current Daily Action: {helper.description} on {helper.date}")
 
@@ -260,21 +259,15 @@ class UpdateController:
             already_exists = ThreeDailyActions.objects.filter(date_only=new_instance.date_only, date_id=new_instance.date_id)
 
             if already_exists.exists():
-               # print("already exists, updated")
                 existing_instance = already_exists.first()
                 if new_instance.date != existing_instance.date or new_instance.description != existing_instance.description or new_instance.is_completed != existing_instance.is_completed:
-                    #print("something changed, saving")
                     existing_instance.date = new_instance.date
                     existing_instance.description = new_instance.description
                     existing_instance.is_completed = new_instance.is_completed
                     existing_instance.save()
             else:
-                #print("doesnt exist, saving")
-                print(f"{new_instance.date_only} {new_instance.date_id}")
                 new_instance.save()
-            #print(f"{new_instance.date_only} {new_instance.date_id}")
     
-        #print("Finished processing daily actions")
         return helpers
     
 
