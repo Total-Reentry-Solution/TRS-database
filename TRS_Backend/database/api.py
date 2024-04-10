@@ -267,7 +267,6 @@ class UpdateController:
                     existing_instance.date = new_instance.date
                     existing_instance.description = new_instance.description
                     existing_instance.is_completed = new_instance.is_completed
-                    existing_instance.save()
             else:
                 print("doesnt exist, saving")
                 print(f"{new_instance.date_only} {new_instance.date_id}")
