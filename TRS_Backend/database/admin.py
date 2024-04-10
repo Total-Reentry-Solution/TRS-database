@@ -213,6 +213,7 @@ admin.site.register(TempUserLogin)
 admin.site.register(TempMentorLogin)
 admin.site.register(TempParoleOfficerLogin)
 admin.site.register(CommunityHealthOrganization)
+admin.site.register(ThreeDailyActions)
 
 admin.site.site_header = "Total Reentry Solutions"
 admin.site.site_title = "TRS Admin Portal"
